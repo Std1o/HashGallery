@@ -39,6 +39,7 @@
         android:text="@string/empty"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/white"
         android:visibility="gone" />
 
 </FrameLayout>
