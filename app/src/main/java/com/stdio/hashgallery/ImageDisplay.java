@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import android.transition.Fade;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     ProgressBar load;
     String foldePath;
     TextView folderName;
+    ImageView ivArrowBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         setContentView(R.layout.activity_image_display);
 
         folderName = findViewById(R.id.foldername);
+        ivArrowBack = findViewById(R.id.ivArrowBack);
         folderName.setText(getIntent().getStringExtra("folderName"));
 
         foldePath =  getIntent().getStringExtra("folderPath");
@@ -59,6 +62,14 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             load.setVisibility(View.GONE);
         }else{
 
+        }
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ivArrowBack:
+                onBackPressed();
+                break;
         }
     }
 

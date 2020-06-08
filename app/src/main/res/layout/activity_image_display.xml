@@ -14,14 +14,25 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/head"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            app:cardBackgroundColor="@color/skyblue">
+            android:layout_height="?actionBarSize"
+            app:cardBackgroundColor="@color/black">
+
+            <ImageView
+                android:id="@+id/ivArrowBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center|start"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="onClick"
+                app:srcCompat="@drawable/ic_arrow" />
 
             <TextView
                 android:id="@+id/foldername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
+                android:layout_gravity="center"
                 android:text="@string/folderName"
                 android:textColor="@color/white"
                 android:textSize="18sp"
@@ -36,7 +47,7 @@
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/black"
             android:columnWidth="@dimen/picture_column_width">
 
 
