@@ -1,6 +1,7 @@
 package com.stdio.hashgallery;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -124,11 +125,14 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             do{
                 ImageModel pic = new ImageModel();
 
+                String picPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                String uri = Uri.parse(picPath).toString();
+
                 pic.setPicturName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)));
-
-                pic.setPicturePath(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)));
-
+                pic.setPicturePath(picPath);
+                pic.setImageUri(uri);
                 pic.setPictureSize(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
+                pic.setTags(getTagsByUri(uri));
 
                 images.add(pic);
             }while(cursor.moveToNext());
@@ -142,6 +146,25 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
             e.printStackTrace();
         }
         return images;
+    }
+
+    private String getTagsByUri(String uri) {
+        DBTags dbTags = new DBTags(this);
+        SQLiteDatabase database = dbTags.getWritableDatabase();
+        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
+            int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+            do {
+                if (cursor.getString(uriIndex).equals(uri)) {
+                    return cursor.getString(tagsIndex);
+                }
+            } while (cursor.moveToNext());
+        } else {
+            cursor.close();
+        }
+        return "";
     }
 
 

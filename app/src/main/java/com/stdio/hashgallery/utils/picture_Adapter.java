@@ -3,12 +3,16 @@ package com.stdio.hashgallery.utils;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.stdio.hashgallery.DBTags;
 import com.stdio.hashgallery.R;
 import com.stdio.hashgallery.models.ImageModel;
 
@@ -66,6 +70,25 @@ public class picture_Adapter extends RecyclerView.Adapter<PicHolder> {
             }
         });
 
+    }
+
+    private String getTagsByUri(String uri) {
+        DBTags dbTags = new DBTags(pictureContx);
+        SQLiteDatabase database = dbTags.getWritableDatabase();
+        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
+            int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+            do {
+                if (cursor.getString(uriIndex).equals(uri)) {
+                    return cursor.getString(tagsIndex);
+                }
+            } while (cursor.moveToNext());
+        } else {
+            cursor.close();
+        }
+        return "";
     }
 
     @Override

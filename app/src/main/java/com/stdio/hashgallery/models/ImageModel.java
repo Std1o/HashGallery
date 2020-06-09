@@ -12,16 +12,18 @@ public class ImageModel {
     private  String pictureSize;
     private  String imageUri;
     private Boolean selected = false;
+    private String tags;
 
     public ImageModel(){
 
     }
 
-    public ImageModel(String picturName, String picturePath, String pictureSize, String imageUri) {
+    public ImageModel(String picturName, String picturePath, String pictureSize, String imageUri, String tags) {
         this.picturName = picturName;
         this.picturePath = picturePath;
         this.pictureSize = pictureSize;
         this.imageUri = imageUri;
+        this.tags = tags;
     }
 
 
@@ -63,5 +65,13 @@ public class ImageModel {
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }

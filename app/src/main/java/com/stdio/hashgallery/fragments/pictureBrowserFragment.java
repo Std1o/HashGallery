@@ -1,8 +1,10 @@
 package com.stdio.hashgallery.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,11 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.stdio.hashgallery.DBTags;
 import com.stdio.hashgallery.R;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
@@ -44,13 +48,15 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     private  ArrayList<ImageModel> allImages = new ArrayList<>();
     private int position;
     private Context animeContx;
+    private String tags;
     private ImageView image;
+    private TextView tvTags;
     private ViewPager imagePager;
-    private int viewVisibilityController;
-    private int viewVisibilitylooper;
     private ImagesPagerAdapter pagingImages;
     private int previousSelected = -1;
     private FloatingActionButton addBtn;
+    DBTags dbTags;
+    public static SQLiteDatabase database;
 
     public pictureBrowserFragment(){
 
@@ -60,6 +66,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         this.allImages = allImages;
         this.position = imagePosition;
         this.animeContx = anim;
+        this.tags = allImages.get(position).getTags();
     }
 
     public static pictureBrowserFragment newInstance(ArrayList<ImageModel> allImages, int imagePosition, Context anim) {
@@ -80,15 +87,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        /**
-         * initialisation of the recyclerView visibility control integers
-         */
-        viewVisibilityController = 0;
-        viewVisibilitylooper = 0;
+        dbTags = new DBTags(getContext());
+        database = dbTags.getWritableDatabase();
 
-        /**
-         * setting up the viewPager with images
-         */
         imagePager = view.findViewById(R.id.imagePager);
         pagingImages = new ImagesPagerAdapter();
         imagePager.setAdapter(pagingImages);
@@ -102,6 +103,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 addTags();
             }
         });
+
+        tvTags = view.findViewById(R.id.tvTags);
+        if (tags != null) {
+            tvTags.setText(allImages.get(position).getTags());
+        }
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
@@ -146,13 +152,21 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 .setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String tags = tagsEditText.getText().toString();
-                        Toast.makeText(getContext(), tags, Toast.LENGTH_SHORT).show();
+                        String tagsEt = tagsEditText.getText().toString();
+                        addToDB(allImages.get(position).getImageUri(), tagsEt);
+                        Toast.makeText(getContext(), tagsEt, Toast.LENGTH_SHORT).show();
                     }
                 });
         dialog.setTitle("Добавить теги");
         dialog.setNegativeButton("Отмена", null);
         dialog.show();
+    }
+
+    private void addToDB(String uri, String tags) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBTags.KEY_URI, uri);
+        contentValues.put(DBTags.KEY_TAGS, tags);
+        database.insert(DBTags.TABLE_TAGS, null, contentValues);
     }
 
 
