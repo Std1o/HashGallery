@@ -72,25 +72,6 @@ public class picture_Adapter extends RecyclerView.Adapter<PicHolder> {
 
     }
 
-    private String getTagsByUri(String uri) {
-        DBTags dbTags = new DBTags(pictureContx);
-        SQLiteDatabase database = dbTags.getWritableDatabase();
-        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
-            int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
-            do {
-                if (cursor.getString(uriIndex).equals(uri)) {
-                    return cursor.getString(tagsIndex);
-                }
-            } while (cursor.moveToNext());
-        } else {
-            cursor.close();
-        }
-        return "";
-    }
-
     @Override
     public int getItemCount() {
         return pictureList.size();

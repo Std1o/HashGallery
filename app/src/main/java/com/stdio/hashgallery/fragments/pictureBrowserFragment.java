@@ -30,6 +30,7 @@ import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import mabbas007.tagsedittext.TagsEditText;
 
@@ -152,9 +153,13 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 .setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String tagsEt = tagsEditText.getText().toString();
-                        addToDB(allImages.get(position).getImageUri(), tagsEt);
-                        Toast.makeText(getContext(), tagsEt, Toast.LENGTH_SHORT).show();
+                        StringBuilder tagsEt = new StringBuilder();
+                        List<String> tagsList = tagsEditText.getTags();
+                        for (String currentTag : tagsList) {
+                            tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
+                        }
+                        addToDB(allImages.get(position).getImageUri(), tagsEt.toString());
+                        Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
         dialog.setTitle("Добавить теги");
