@@ -4,24 +4,31 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.stdio.hashgallery.fragments.pictureBrowserFragment;
 import com.stdio.hashgallery.utils.MarginDecoration;
 import com.stdio.hashgallery.utils.PicHolder;
 import com.stdio.hashgallery.models.ImageFolderModel;
 import com.stdio.hashgallery.utils.itemClickListener;
 import com.stdio.hashgallery.models.ImageModel;
 import com.stdio.hashgallery.utils.pictureFolderAdapter;
+import com.stdio.hashgallery.utils.picture_Adapter;
 
 import java.util.ArrayList;
 
@@ -35,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     RecyclerView folderRecycler;
     TextView empty;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 134;
+    ArrayList<ImageModel> allpictures = new ArrayList<>();
+    public static SearchView searchView;
 
     /**
      * Request the user for permission to access media files and read images on the device
@@ -69,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         folderRecycler = findViewById(R.id.folderRecycler);
         folderRecycler.addItemDecoration(new MarginDecoration(this));
         folderRecycler.hasFixedSize();
+        initFolders();
+        searchView = findViewById(R.id.searchView);
+        setOnQueryTextListener();
+    }
+
+    private void initFolders() {
         ArrayList<ImageFolderModel> folds = getPicturePaths();
 
         if(folds.isEmpty()){
@@ -77,6 +92,117 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             RecyclerView.Adapter folderAdapter = new pictureFolderAdapter(folds,MainActivity.this,this);
             folderRecycler.setAdapter(folderAdapter);
         }
+    }
+
+    private void setOnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(allpictures.isEmpty()){
+                    allpictures = getAllImagesByFolder();
+                }
+                String query = s.replace("#", "");
+                if (getFilteredList(query).size() == 0 || query.isEmpty()) {
+                    initFolders();
+                }
+                else {
+                    folderRecycler.setAdapter(new picture_Adapter(getFilteredList(query),MainActivity.this,MainActivity.this));
+                }
+                return false;
+            }
+        });
+    }
+
+    private ArrayList<ImageModel> getFilteredList(String query) {
+        ArrayList<ImageModel> filteredList = new ArrayList<>();
+        for (ImageModel imageModel : allpictures) {
+            if (imageModel.getTags().contains(query)) {
+                filteredList.add(imageModel);
+            }
+        }
+        return filteredList;
+    }
+
+    @Override
+    public void onPicClicked(PicHolder holder, int position, ArrayList<ImageModel> pics) {
+        pictureBrowserFragment browser = pictureBrowserFragment.newInstance(pics,position, this);
+
+        // Note that we need the API version check here because the actual transition classes (e.g. Fade)
+        // are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
+        // ARE available in the support library (though they don't do anything on API < 21)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //browser.setEnterTransition(new Slide());
+            //browser.setExitTransition(new Slide()); uncomment this to use slide transition and comment the two lines below
+            browser.setEnterTransition(new Fade());
+            browser.setExitTransition(new Fade());
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .addSharedElement(holder.picture, position+"picture")
+                .add(R.id.displayContainer, browser)
+                .addToBackStack(null)
+                .commit();
+
+    }
+
+    public ArrayList<ImageModel> getAllImagesByFolder(){
+        ArrayList<ImageModel> images = new ArrayList<>();
+        Uri allVideosuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE};
+        Cursor cursor = this.getContentResolver().query( allVideosuri, projection, MediaStore.Images.Media.DATA + " like ? ", new String[] {"%"+"%"}, null);
+        try {
+            cursor.moveToFirst();
+            do{
+                ImageModel pic = new ImageModel();
+
+                String picPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                String uri = Uri.parse(picPath).toString();
+
+                pic.setPicturName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)));
+                pic.setPicturePath(picPath);
+                pic.setImageUri(uri);
+                pic.setPictureSize(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
+                pic.setTags(getTagsByUri(uri));
+
+                images.add(pic);
+            }while(cursor.moveToNext());
+            cursor.close();
+            ArrayList<ImageModel> reSelection = new ArrayList<>();
+            for(int i = images.size()-1;i > -1;i--){
+                reSelection.add(images.get(i));
+            }
+            images = reSelection;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return images;
+    }
+
+    private String getTagsByUri(String uri) {
+        DBTags dbTags = new DBTags(this);
+        SQLiteDatabase database = dbTags.getWritableDatabase();
+        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
+            int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+            do {
+                if (cursor.getString(uriIndex).equals(uri)) {
+                    return cursor.getString(tagsIndex);
+                }
+            } while (cursor.moveToNext());
+        } else {
+            cursor.close();
+        }
+        return "";
     }
 
     /**
@@ -138,13 +264,6 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
         return picFolders;
     }
-
-
-    @Override
-    public void onPicClicked(PicHolder holder, int position, ArrayList<ImageModel> pics) {
-
-    }
-
     /**
      * Each time an item in the RecyclerView is clicked this method from the implementation of the transitListerner
      * in this activity is executed, this is possible because this class is passed as a parameter in the creation
