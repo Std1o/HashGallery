@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:TagsEditText="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <mabbas007.tagsedittext.TagsEditText
+        android:id="@+id/tagsEditText"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:hint="Введите теги"
+        android:background="@drawable/selector_lines_edit_view_bg"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:gravity="start"
+        android:inputType="textPersonName|textMultiLine"
+        TagsEditText:tagsBackground="@drawable/square"
+        TagsEditText:tagsTextColor="@color/black"
+        TagsEditText:allowSpaceInTag="true"
+        TagsEditText:tagsCloseImageRight="@drawable/tag_close"
+        TagsEditText:tagsTextSize="@dimen/defaultTagsTextSize"
+        TagsEditText:tagsCloseImagePadding="@dimen/defaultTagsCloseImagePadding"/>
+</LinearLayout>

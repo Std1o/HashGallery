@@ -2,10 +2,12 @@ package com.stdio.hashgallery.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -14,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +26,8 @@ import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
 
 import java.util.ArrayList;
+
+import mabbas007.tagsedittext.TagsEditText;
 
 import static androidx.core.view.ViewCompat.setTransitionName;
 
@@ -90,6 +96,12 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         imagePager.setCurrentItem(position);//displaying the image at the current position passed by the ImageDisplay Activity
 
         addBtn = view.findViewById(R.id.fab);
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addTags();
+            }
+        });
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
@@ -124,6 +136,23 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             }
         });
+    }
+
+    private void addTags() {
+        View dialogView = getLayoutInflater().inflate(R.layout.add_dialog, null);
+        final TagsEditText tagsEditText = dialogView.findViewById(R.id.tagsEditText);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                .setView(dialogView)
+                .setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String tags = tagsEditText.getText().toString();
+                        Toast.makeText(getContext(), tags, Toast.LENGTH_SHORT).show();
+                    }
+                });
+        dialog.setTitle("Добавить теги");
+        dialog.setNegativeButton("Отмена", null);
+        dialog.show();
     }
 
 
