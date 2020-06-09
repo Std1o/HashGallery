@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,8 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     private String tags;
     private ImageView image;
     private TextView tvTags;
+    Toolbar toolbar;
+    public static SearchView searchView;
     private ViewPager imagePager;
     private ImagesPagerAdapter pagingImages;
     private int previousSelected = -1;
@@ -104,6 +108,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 addTags();
             }
         });
+        toolbar = view.findViewById(R.id.toolbar);
+        searchView = view.findViewById(R.id.searchView);
+        setOnQueryTextListener();
 
         tvTags = view.findViewById(R.id.tvTags);
         if (tags != null) {
@@ -163,6 +170,21 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+    }
+
+    private void setOnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //setRecyclerViewAdapter(getFilteredList(s.toUpperCase()));
+                return false;
             }
         });
     }
@@ -250,9 +272,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                     if(addBtn.isShown()){
                         addBtn.hide();
                         tvTags.setVisibility(View.GONE);
+                        toolbar.setVisibility(View.GONE);
                     }else{
                         addBtn.show();
                         tvTags.setVisibility(View.VISIBLE);
+                        toolbar.setVisibility(View.VISIBLE);
                     }
 
                     /**
