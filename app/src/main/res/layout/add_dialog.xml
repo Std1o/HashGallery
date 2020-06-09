@@ -13,7 +13,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
-        android:hint="Введите теги"
+        android:hint="Введите теги, разделяя их кнопкой enter"
         android:background="@drawable/selector_lines_edit_view_bg"
         android:paddingTop="5dp"
         android:paddingLeft="10dp"
