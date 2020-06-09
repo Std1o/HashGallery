@@ -23,19 +23,18 @@
 
   </androidx.viewpager.widget.ViewPager>
 
-  <!--android:scaleType="centerCrop"-->
-
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/indicatorRecycler"
-      android:layout_width="match_parent"
-      android:layout_height="70dp"
-      android:layout_gravity="bottom"
-      android:layout_marginBottom="10dp"
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/fab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="70dp"
       android:clickable="true"
-      android:visibility="gone"
-      android:focusable="true">
-
-  </androidx.recyclerview.widget.RecyclerView>
+      android:focusable="true"
+      app:backgroundTint="@android:color/black"
+      app:fabSize="mini"
+      app:srcCompat="@drawable/ic_add"/>
 
 
 </FrameLayout>

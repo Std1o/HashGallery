@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stdio.hashgallery.R;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.utils.pictureFacer;
@@ -42,11 +43,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     private Context animeContx;
     private ImageView image;
     private ViewPager imagePager;
-    private RecyclerView indicatorRecycler;
     private int viewVisibilityController;
     private int viewVisibilitylooper;
     private ImagesPagerAdapter pagingImages;
     private int previousSelected = -1;
+    private FloatingActionButton addBtn;
 
     public pictureBrowserFragment(){
 
@@ -91,22 +92,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         imagePager.setOffscreenPageLimit(3);
         imagePager.setCurrentItem(position);//displaying the image at the current position passed by the ImageDisplay Activity
 
-
-        /**
-         * setting up the recycler view indicator for the viewPager
-         */
-        indicatorRecycler = view.findViewById(R.id.indicatorRecycler);
-        indicatorRecycler.hasFixedSize();
-        indicatorRecycler.setLayoutManager(new GridLayoutManager(getContext(),1,RecyclerView.HORIZONTAL,false));
-        RecyclerView.Adapter indicatorAdapter = new recyclerViewPagerImageIndicator(allImages,getContext(),this);
-        indicatorRecycler.setAdapter(indicatorAdapter);
-
+        addBtn = view.findViewById(R.id.fab);
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
         previousSelected = position;
-        indicatorAdapter.notifyDataSetChanged();
-        indicatorRecycler.scrollToPosition(position);
 
 
         /**
@@ -126,13 +116,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                     allImages.get(previousSelected).setSelected(false);
                     previousSelected = position;
                     allImages.get(position).setSelected(true);
-                    indicatorRecycler.getAdapter().notifyDataSetChanged();
-                    indicatorRecycler.scrollToPosition(position);
                 }else{
                     previousSelected = position;
                     allImages.get(position).setSelected(true);
-                    indicatorRecycler.getAdapter().notifyDataSetChanged();
-                    indicatorRecycler.scrollToPosition(position);
                 }
             }
 
@@ -141,25 +127,6 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             }
         });
-
-
-        indicatorRecycler.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                /**
-                 *  uncomment the below condition to control recyclerView visibility automatically
-                 *  when image is clicked also uncomment the condition set on the image's onClickListener in the ImagesPagerAdapter adapter
-                 */
-                /*if(viewVisibilityController == 0){
-                    indicatorRecycler.setVisibility(View.VISIBLE);
-                    visibiling();
-                }else{
-                    viewVisibilitylooper++;
-                }*/
-                return false;
-            }
-        });
-
     }
 
 
@@ -176,7 +143,6 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         if(previousSelected != -1){
             allImages.get(previousSelected).setSelected(false);
             previousSelected = ImagePosition;
-            indicatorRecycler.getAdapter().notifyDataSetChanged();
         }else{
             previousSelected = ImagePosition;
         }
@@ -214,10 +180,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 @Override
                 public void onClick(View v) {
 
-                    if(indicatorRecycler.getVisibility() == View.GONE){
-                        indicatorRecycler.setVisibility(View.VISIBLE);
+                    if(addBtn.isShown()){
+                        addBtn.hide();
                     }else{
-                        indicatorRecycler.setVisibility(View.GONE);
+                        addBtn.show();
                     }
 
                     /**
@@ -250,26 +216,4 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
             return view == ((View) object);
         }
     }
-
-    /**
-     * function for controlling the visibility of the recyclerView indicator
-     */
-    private void visibiling(){
-        viewVisibilityController = 1;
-        final int checker = viewVisibilitylooper;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(viewVisibilitylooper > checker){
-                   visibiling();
-                }else{
-                   indicatorRecycler.setVisibility(View.GONE);
-                   viewVisibilityController = 0;
-
-                   viewVisibilitylooper = 0;
-                }
-            }
-        }, 4000);
-    }
-
 }
