@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.stdio.hashgallery.R;
+import com.stdio.hashgallery.models.ImageModel;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  */
 public class recyclerViewPagerImageIndicator extends RecyclerView.Adapter<indicatorHolder> {
 
-    ArrayList<pictureFacer> pictureList;
+    ArrayList<ImageModel> pictureList;
     Context pictureContx;
     private final imageIndicatorListener imageListerner;
 
@@ -28,7 +29,7 @@ public class recyclerViewPagerImageIndicator extends RecyclerView.Adapter<indica
      * @param pictureContx The Activity of fragment context
      * @param imageListerner Interface for communication between adapter and fragment
      */
-    public recyclerViewPagerImageIndicator(ArrayList<pictureFacer> pictureList, Context pictureContx, imageIndicatorListener imageListerner) {
+    public recyclerViewPagerImageIndicator(ArrayList<ImageModel> pictureList, Context pictureContx, imageIndicatorListener imageListerner) {
         this.pictureList = pictureList;
         this.pictureContx = pictureContx;
         this.imageListerner = imageListerner;
@@ -46,7 +47,7 @@ public class recyclerViewPagerImageIndicator extends RecyclerView.Adapter<indica
     @Override
     public void onBindViewHolder(@NonNull indicatorHolder holder, final int position) {
 
-        final pictureFacer pic = pictureList.get(position);
+        final ImageModel pic = pictureList.get(position);
 
         holder.positionController.setBackgroundColor(pic.getSelected() ? Color.parseColor("#00000000") : Color.parseColor("#8c000000"));
 

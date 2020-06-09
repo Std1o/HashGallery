@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.stdio.hashgallery.utils.MarginDecoration;
 import com.stdio.hashgallery.utils.PicHolder;
-import com.stdio.hashgallery.utils.imageFolder;
+import com.stdio.hashgallery.models.ImageFolderModel;
 import com.stdio.hashgallery.utils.itemClickListener;
-import com.stdio.hashgallery.utils.pictureFacer;
+import com.stdio.hashgallery.models.ImageModel;
 import com.stdio.hashgallery.utils.pictureFolderAdapter;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         folderRecycler = findViewById(R.id.folderRecycler);
         folderRecycler.addItemDecoration(new MarginDecoration(this));
         folderRecycler.hasFixedSize();
-        ArrayList<imageFolder> folds = getPicturePaths();
+        ArrayList<ImageFolderModel> folds = getPicturePaths();
 
         if(folds.isEmpty()){
             empty.setVisibility(View.VISIBLE);
@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
      * gets all folders with pictures on the device and loads each of them in a custom object imageFolder
      * the returns an ArrayList of these custom objects
      */
-    private ArrayList<imageFolder> getPicturePaths(){
-        ArrayList<imageFolder> picFolders = new ArrayList<>();
+    private ArrayList<ImageFolderModel> getPicturePaths(){
+        ArrayList<ImageFolderModel> picFolders = new ArrayList<>();
         ArrayList<String> picPaths = new ArrayList<>();
         Uri allImagesuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
                 cursor.moveToFirst();
             }
             do{
-                imageFolder folds = new imageFolder();
+                ImageFolderModel folds = new ImageFolderModel();
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME));
                 String folder = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
                 String datapath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
 
     @Override
-    public void onPicClicked(PicHolder holder, int position, ArrayList<pictureFacer> pics) {
+    public void onPicClicked(PicHolder holder, int position, ArrayList<ImageModel> pics) {
 
     }
 

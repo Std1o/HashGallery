@@ -17,7 +17,7 @@ import com.stdio.hashgallery.fragments.pictureBrowserFragment;
 import com.stdio.hashgallery.utils.MarginDecoration;
 import com.stdio.hashgallery.utils.PicHolder;
 import com.stdio.hashgallery.utils.itemClickListener;
-import com.stdio.hashgallery.utils.pictureFacer;
+import com.stdio.hashgallery.models.ImageModel;
 import com.stdio.hashgallery.utils.picture_Adapter;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class ImageDisplay extends AppCompatActivity implements itemClickListener {
 
     RecyclerView imageRecycler;
-    ArrayList<pictureFacer> allpictures;
+    ArrayList<ImageModel> allpictures;
     ProgressBar load;
     String foldePath;
     TextView folderName;
@@ -80,7 +80,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
      * @param pics An ArrayList of all the items in the Adapter
      */
     @Override
-    public void onPicClicked(PicHolder holder, int position, ArrayList<pictureFacer> pics) {
+    public void onPicClicked(PicHolder holder, int position, ArrayList<ImageModel> pics) {
         pictureBrowserFragment browser = pictureBrowserFragment.newInstance(pics,position,ImageDisplay.this);
 
         // Note that we need the API version check here because the actual transition classes (e.g. Fade)
@@ -113,8 +113,8 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
      * and ArrayList of pictureFacer a custom object that holds data of a given image
      * @param path a String corresponding to a folder path on the device external storage
      */
-    public ArrayList<pictureFacer> getAllImagesByFolder(String path){
-        ArrayList<pictureFacer> images = new ArrayList<>();
+    public ArrayList<ImageModel> getAllImagesByFolder(String path){
+        ArrayList<ImageModel> images = new ArrayList<>();
         Uri allVideosuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.SIZE};
@@ -122,7 +122,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         try {
             cursor.moveToFirst();
             do{
-                pictureFacer pic = new pictureFacer();
+                ImageModel pic = new ImageModel();
 
                 pic.setPicturName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)));
 
@@ -133,7 +133,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
                 images.add(pic);
             }while(cursor.moveToNext());
             cursor.close();
-            ArrayList<pictureFacer> reSelection = new ArrayList<>();
+            ArrayList<ImageModel> reSelection = new ArrayList<>();
             for(int i = images.size()-1;i > -1;i--){
                 reSelection.add(images.get(i));
             }

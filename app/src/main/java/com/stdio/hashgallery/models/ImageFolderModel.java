@@ -1,4 +1,4 @@
-package com.stdio.hashgallery.utils;
+package com.stdio.hashgallery.models;
 
 /**
  * author CodeBoy722
@@ -7,18 +7,18 @@ package com.stdio.hashgallery.utils;
  * on the device external storage, used to populate our RecyclerView of
  * picture folders
  */
-public class imageFolder {
+public class ImageFolderModel {
 
     private  String path;
     private  String FolderName;
     private int numberOfPics = 0;
     private String firstPic;
 
-    public imageFolder(){
+    public ImageFolderModel(){
 
     }
 
-    public imageFolder(String path, String folderName) {
+    public ImageFolderModel(String path, String folderName) {
         this.path = path;
         FolderName = folderName;
     }

@@ -3,16 +3,14 @@ package com.stdio.hashgallery.fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,8 +19,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stdio.hashgallery.R;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
-import com.stdio.hashgallery.utils.pictureFacer;
-import com.stdio.hashgallery.utils.recyclerViewPagerImageIndicator;
+import com.stdio.hashgallery.models.ImageModel;
 
 import java.util.ArrayList;
 
@@ -38,7 +35,7 @@ import static androidx.core.view.ViewCompat.setTransitionName;
  */
 public class pictureBrowserFragment extends Fragment implements imageIndicatorListener {
 
-    private  ArrayList<pictureFacer> allImages = new ArrayList<>();
+    private  ArrayList<ImageModel> allImages = new ArrayList<>();
     private int position;
     private Context animeContx;
     private ImageView image;
@@ -53,13 +50,13 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
     }
 
-    public pictureBrowserFragment(ArrayList<pictureFacer> allImages, int imagePosition, Context anim) {
+    public pictureBrowserFragment(ArrayList<ImageModel> allImages, int imagePosition, Context anim) {
         this.allImages = allImages;
         this.position = imagePosition;
         this.animeContx = anim;
     }
 
-    public static pictureBrowserFragment newInstance(ArrayList<pictureFacer> allImages, int imagePosition, Context anim) {
+    public static pictureBrowserFragment newInstance(ArrayList<ImageModel> allImages, int imagePosition, Context anim) {
         pictureBrowserFragment fragment = new pictureBrowserFragment(allImages,imagePosition,anim);
         return fragment;
     }
@@ -170,7 +167,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             setTransitionName(image, String.valueOf(position)+"picture");
 
-            pictureFacer pic = allImages.get(position);
+            ImageModel pic = allImages.get(position);
             Glide.with(animeContx)
                     .load(pic.getPicturePath())
                     .apply(new RequestOptions().fitCenter())

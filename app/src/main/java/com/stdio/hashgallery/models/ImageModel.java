@@ -1,11 +1,11 @@
-package com.stdio.hashgallery.utils;
+package com.stdio.hashgallery.models;
 
 /**
  * Author CodeBoy722
  *
  * Custom class for holding data of images on the device external storage
  */
-public class pictureFacer {
+public class ImageModel {
 
     private String picturName;
     private String picturePath;
@@ -13,11 +13,11 @@ public class pictureFacer {
     private  String imageUri;
     private Boolean selected = false;
 
-    public pictureFacer(){
+    public ImageModel(){
 
     }
 
-    public pictureFacer(String picturName, String picturePath, String pictureSize, String imageUri) {
+    public ImageModel(String picturName, String picturePath, String pictureSize, String imageUri) {
         this.picturName = picturName;
         this.picturePath = picturePath;
         this.pictureSize = pictureSize;

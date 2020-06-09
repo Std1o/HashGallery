@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.stdio.hashgallery.R;
+import com.stdio.hashgallery.models.ImageFolderModel;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ import java.util.ArrayList;
  */
 public class pictureFolderAdapter extends RecyclerView.Adapter<pictureFolderAdapter.FolderHolder>{
 
-    private ArrayList<imageFolder> folders;
+    private ArrayList<ImageFolderModel> folders;
     private Context folderContx;
     private itemClickListener listenToClick;
 
@@ -32,7 +33,7 @@ public class pictureFolderAdapter extends RecyclerView.Adapter<pictureFolderAdap
      * @param folderContx The Activity or fragment Context
      * @param listen interFace for communication between adapter and fragment or activity
      */
-    public pictureFolderAdapter(ArrayList<imageFolder> folders, Context folderContx, itemClickListener listen) {
+    public pictureFolderAdapter(ArrayList<ImageFolderModel> folders, Context folderContx, itemClickListener listen) {
         this.folders = folders;
         this.folderContx = folderContx;
         this.listenToClick = listen;
@@ -49,7 +50,7 @@ public class pictureFolderAdapter extends RecyclerView.Adapter<pictureFolderAdap
 
     @Override
     public void onBindViewHolder(@NonNull FolderHolder holder, int position) {
-        final imageFolder folder = folders.get(position);
+        final ImageFolderModel folder = folders.get(position);
 
         Glide.with(folderContx)
                 .load(folder.getFirstPic())
