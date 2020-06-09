@@ -109,6 +109,28 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         if (tags != null) {
             tvTags.setText(allImages.get(position).getTags());
         }
+        imagePager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                tags = allImages.get(position).getTags();
+                if (tags != null) {
+                    tvTags.setText(tags);
+                }
+                else {
+                    tvTags.setText("");
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
@@ -227,8 +249,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
                     if(addBtn.isShown()){
                         addBtn.hide();
+                        tvTags.setVisibility(View.GONE);
                     }else{
                         addBtn.show();
+                        tvTags.setVisibility(View.VISIBLE);
                     }
 
                     /**
