@@ -130,26 +130,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
     @Override
     public void onPicClicked(PicHolder holder, int position, ArrayList<ImageModel> pics) {
-        pictureBrowserFragment browser = pictureBrowserFragment.newInstance(pics,position, this);
-
-        // Note that we need the API version check here because the actual transition classes (e.g. Fade)
-        // are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
-        // ARE available in the support library (though they don't do anything on API < 21)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //browser.setEnterTransition(new Slide());
-            //browser.setExitTransition(new Slide()); uncomment this to use slide transition and comment the two lines below
-            browser.setEnterTransition(new Fade());
-            browser.setExitTransition(new Fade());
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .addSharedElement(holder.picture, position+"picture")
-                .add(R.id.displayContainer, browser)
-                .addToBackStack(null)
-                .commit();
-
+        ReviewImageActivity.imageModel = pics.get(position);
+        startActivity(new Intent(this, ReviewImageActivity.class));
     }
 
     public ArrayList<ImageModel> getAllImagesByFolder(){
