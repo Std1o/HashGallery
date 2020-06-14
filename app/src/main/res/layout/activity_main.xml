@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:background="@color/black"
             android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
             <LinearLayout
                 android:id="@+id/searchLayout"
                 android:layout_width="match_parent"
