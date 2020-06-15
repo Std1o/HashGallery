@@ -6,6 +6,10 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="1dp"
@@ -23,6 +27,9 @@
                 android:id="@+id/tvTag"
                 android:layout_width="wrap_content"
                 android:textColor="#ff0000ff"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
                 android:textSize="16sp"
                 android:layout_height="wrap_content" />
 

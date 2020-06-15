@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -28,11 +29,13 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.PicHolder> {
     public class PicHolder extends RecyclerView.ViewHolder{
 
         public TextView tvTag;
+        CardView cardView;
 
         PicHolder(@NonNull View itemView) {
             super(itemView);
 
             tvTag = itemView.findViewById(R.id.tvTag);
+            cardView = itemView.findViewById(R.id.cv);
         }
     }
 
@@ -57,6 +60,14 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.PicHolder> {
     public void onBindViewHolder(@NonNull final PicHolder holder, final int position) {
         holder.tvTag.setText(tagsList.get(position));
         holder.tvTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.searchView.setIconified(false);//open searchView
+                MainActivity.searchView.setQuery(holder.tvTag.getText().toString(), false);
+                ReviewImageActivity.activity.finish();
+            }
+        });
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.searchView.setIconified(false);//open searchView
