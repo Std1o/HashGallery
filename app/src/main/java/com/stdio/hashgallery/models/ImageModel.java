@@ -13,6 +13,7 @@ public class ImageModel {
     private  String imageUri;
     private Boolean selected = false;
     private String tags;
+    private int id;
 
     public ImageModel(){
 
@@ -24,6 +25,14 @@ public class ImageModel {
         this.pictureSize = pictureSize;
         this.imageUri = imageUri;
         this.tags = tags;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 

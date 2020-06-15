@@ -195,13 +195,24 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                         for (String currentTag : tagsList) {
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
-                        addToDB(allImages.get(position).getImageUri(), tagsEt.toString());
+                        if (allImages.get(position).getTags() == null) {
+                            addToDB(allImages.get(position).getImageUri(), tagsEt.toString());
+                        }
+                        else {
+                            ImageModel imageModel = allImages.get(position);
+                            updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
+                        }
                         Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
         dialog.setTitle("Добавить теги");
         dialog.setNegativeButton("Отмена", null);
         dialog.show();
+    }
+
+    private void updateDB(String tags, int id) {
+        database.execSQL("UPDATE tags SET tags = '" + tags + "' WHERE _id='"
+                + id + "';");
     }
 
     private void addToDB(String uri, String tags) {
