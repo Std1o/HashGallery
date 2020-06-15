@@ -155,25 +155,29 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
     private void setTags() {
         for (String retval : allImages.get(position).getTags().split(" ", 2)) {
-            final TextView tv1 = new TextView(getContext());
-            tv1.setText(retval);
-            tv1.setTextSize(16);
-            tv1.setTextColor(Color.parseColor("#ff0000ff"));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(7,0,7,0);
-            tv1.setLayoutParams(params);
-            tv1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MainActivity.searchView.setIconified(false);//open searchView
-                    MainActivity.searchView.setQuery(tv1.getText().toString(), false);
-                    activateSearch = true;
-                    getFragmentManager().popBackStack();
-                    ImageDisplay.activity.finish();
-                }
-            });
-            linearLayout.addView(tv1);
+            linearLayout.addView(getTvTag(retval));
         }
+    }
+
+    private TextView getTvTag(String text) {
+        final TextView tv1 = new TextView(getContext());
+        tv1.setText(text);
+        tv1.setTextSize(16);
+        tv1.setTextColor(Color.parseColor("#ff0000ff"));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(7,0,7,0);
+        tv1.setLayoutParams(params);
+        tv1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.searchView.setIconified(false);//open searchView
+                MainActivity.searchView.setQuery(tv1.getText().toString(), false);
+                activateSearch = true;
+                getFragmentManager().popBackStack();
+                ImageDisplay.activity.finish();
+            }
+        });
+        return tv1;
     }
 
     private void addTags() {
@@ -196,6 +200,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                             ImageModel imageModel = allImages.get(position);
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
                         }
+                        linearLayout.addView(getTvTag(tagsEt.toString()));
                         Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
