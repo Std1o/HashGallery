@@ -39,6 +39,8 @@ public class ReviewImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_image);
 
+        System.out.println(imageModel.getPicturePath());
+
         dbTags = new DBTags(this);
         database = dbTags.getWritableDatabase();
 
