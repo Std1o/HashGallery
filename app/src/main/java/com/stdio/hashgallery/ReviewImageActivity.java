@@ -58,6 +58,15 @@ public class ReviewImageActivity extends AppCompatActivity {
             tvTags.setText(imageModel.getTags());
         }
 
+        tvTags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.searchView.setIconified(false);//open searchView
+                MainActivity.searchView.setQuery(imageModel.getTags(), false);
+                finish();
+            }
+        });
+
         Glide.with(this)
                 .load(imageModel.getPicturePath())
                 .apply(new RequestOptions().fitCenter())
