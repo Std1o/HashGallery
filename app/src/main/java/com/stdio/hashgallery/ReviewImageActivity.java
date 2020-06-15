@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,10 +40,12 @@ public class ReviewImageActivity extends AppCompatActivity {
     RecyclerView imageRecycler;
     ArrayList<String> tagsList = new ArrayList<>();
     TagsAdapter adapter;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         setContentView(R.layout.activity_review_image);
 
         System.out.println(imageModel.getImageUri());

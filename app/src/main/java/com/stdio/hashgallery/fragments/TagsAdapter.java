@@ -1,21 +1,17 @@
-package com.stdio.hashgallery;
+package com.stdio.hashgallery.fragments;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
+import com.stdio.hashgallery.R;
 
 import java.util.ArrayList;
-
-import static androidx.core.view.ViewCompat.setTransitionName;
 
 /**
  * Author CodeBoy722
@@ -59,9 +55,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.PicHolder> {
         holder.tvTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.searchView.setIconified(false);//open searchView
-                MainActivity.searchView.setQuery(holder.tvTag.getText().toString(), false);
-                ReviewImageActivity.activity.finish();
+                //picListerner.onPicClicked(holder,position, pictureList);
             }
         });
 

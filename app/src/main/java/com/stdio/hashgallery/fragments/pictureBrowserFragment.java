@@ -33,7 +33,6 @@ import com.stdio.hashgallery.DBTags;
 import com.stdio.hashgallery.ImageDisplay;
 import com.stdio.hashgallery.MainActivity;
 import com.stdio.hashgallery.R;
-import com.stdio.hashgallery.TagsAdapter;
 import com.stdio.hashgallery.utils.MarginDecoration;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
