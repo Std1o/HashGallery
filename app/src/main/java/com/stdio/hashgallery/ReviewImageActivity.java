@@ -122,8 +122,8 @@ public class ReviewImageActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         StringBuilder tagsEt = new StringBuilder();
-                        List<String> tagsList = tagsEditText.getTags();
-                        for (String currentTag : tagsList) {
+                        List<String> tagsListg = tagsEditText.getTags();
+                        for (String currentTag : tagsListg) {
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
                         if (imageModel.getTags() == null) {
@@ -133,7 +133,8 @@ public class ReviewImageActivity extends AppCompatActivity {
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
                         }
                         tagsList.add(tagsEt.toString());
-                        adapter.notifyDataSetChanged();
+                        adapter = new TagsAdapter(tagsList, ReviewImageActivity.this);
+                        imageRecycler.setAdapter(adapter);
                         Toast.makeText(ReviewImageActivity.this, tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
