@@ -314,7 +314,9 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         if (id == R.id.action_photo) {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());//получаем время
             final String imageFileName = "photo_" + timeStamp;//состовляем имя файла
-            CameraUtils.launchCamera((Activity) this);
+            if (file_permission()) {
+                CameraUtils.launchCamera((Activity) this);
+            }
             return true;
         }
 
