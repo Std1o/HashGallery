@@ -95,7 +95,7 @@ public class ReviewImageActivity extends AppCompatActivity {
     }
 
     private void setTags() {
-        for (String retval : imageModel.getTags().split(" ", 2)) {
+        for (String retval : imageModel.getTags().split(" ")) {
             final TextView tv1 = new TextView(this);
             tv1.setText(retval);
             tv1.setTextSize(16);

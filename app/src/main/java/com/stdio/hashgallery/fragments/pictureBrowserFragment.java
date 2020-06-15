@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -32,10 +33,14 @@ import com.stdio.hashgallery.DBTags;
 import com.stdio.hashgallery.ImageDisplay;
 import com.stdio.hashgallery.MainActivity;
 import com.stdio.hashgallery.R;
+import com.stdio.hashgallery.TagsAdapter;
+import com.stdio.hashgallery.utils.MarginDecoration;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
+import com.stdio.hashgallery.utils.picture_Adapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mabbas007.tagsedittext.TagsEditText;
@@ -65,7 +70,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     DBTags dbTags;
     public static SQLiteDatabase database;
     public static boolean activateSearch = false;
-    LinearLayout linearLayout;
+    RecyclerView imageRecycler;
+    ArrayList<String> tagsList = new ArrayList<>();
+    TagsAdapter adapter;
 
     public pictureBrowserFragment(){
 
@@ -99,7 +106,12 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         dbTags = new DBTags(getContext());
         database = dbTags.getWritableDatabase();
 
-        linearLayout = view.findViewById(R.id.lnTags);
+        if (allImages.get(position).getTags() != null) {
+            setTags(position);
+        }
+        imageRecycler = view.findViewById(R.id.recycler);
+        adapter = new TagsAdapter(tagsList,getContext());
+        imageRecycler.setAdapter(adapter);
         imagePager = view.findViewById(R.id.imagePager);
         pagingImages = new ImagesPagerAdapter();
         imagePager.setAdapter(pagingImages);
@@ -114,9 +126,6 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
             }
         });
 
-        if (allImages.get(position).getTags() != null) {
-            setTags();
-        }
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
@@ -130,7 +139,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         imagePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                setTags(position);
+                adapter = new TagsAdapter(tagsList,getContext());
+                imageRecycler.setAdapter(adapter);
             }
 
             @Override
@@ -153,9 +164,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         });
     }
 
-    private void setTags() {
-        for (String retval : allImages.get(position).getTags().split(" ", 2)) {
-            linearLayout.addView(getTvTag(retval));
+    private void setTags(int position) {
+        tagsList = new ArrayList<>();
+        if (allImages.get(position).getTags() != null) {
+            tagsList.addAll(Arrays.asList(allImages.get(position).getTags().split(" ")));
         }
     }
 
@@ -200,7 +212,8 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                             ImageModel imageModel = allImages.get(position);
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
                         }
-                        linearLayout.addView(getTvTag(tagsEt.toString()));
+                        tagsList.add(tagsEt.toString());
+                        adapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -274,10 +287,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
                     if(addBtn.isShown()){
                         addBtn.hide();
-                        linearLayout.setVisibility(View.GONE);
+                        imageRecycler.setVisibility(View.GONE);
                     }else{
                         addBtn.show();
-                        linearLayout.setVisibility(View.VISIBLE);
+                        imageRecycler.setVisibility(View.VISIBLE);
                     }
 
                     /**
