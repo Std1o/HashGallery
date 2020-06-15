@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     private ArrayList<ImageModel> getFilteredList(String query) {
         ArrayList<ImageModel> filteredList = new ArrayList<>();
         for (ImageModel imageModel : allpictures) {
-            if (imageModel.getTags().contains(query)) {
+            if (imageModel.getTags() != null && imageModel.getTags().contains(query)) {
                 filteredList.add(imageModel);
             }
         }
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
                 pic.setPicturePath(picPath);
                 pic.setImageUri(uri);
                 pic.setPictureSize(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
-                pic.setTags(getTagsByUri(uri));
+                pic = getNormalModelByUri(pic);
 
                 images.add(pic);
             }while(cursor.moveToNext());
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         return images;
     }
 
-    private String getTagsByUri(String uri) {
+    private ImageModel getNormalModelByUri(ImageModel imageModel) {
         DBTags dbTags = new DBTags(this);
         SQLiteDatabase database = dbTags.getWritableDatabase();
         Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
@@ -213,15 +213,18 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         if (cursor.moveToFirst()) {
             int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
             int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+            int idIndex = cursor.getColumnIndex(DBTags.KEY_ID);
             do {
-                if (cursor.getString(uriIndex).equals(uri)) {
-                    return cursor.getString(tagsIndex);
+                if (cursor.getString(uriIndex).equals(imageModel.getImageUri())) {
+                    imageModel.setTags(cursor.getString(tagsIndex));
+                    imageModel.setId(cursor.getInt(idIndex));
+                    return imageModel;
                 }
             } while (cursor.moveToNext());
         } else {
             cursor.close();
         }
-        return "";
+        return imageModel;
     }
 
     /**
@@ -394,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             String picPath = String.valueOf(uri).replace("content://" + getPackageName() + ".provider/external_files/DCIM", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
             pic.setPicturePath(picPath);
             pic.setImageUri(Uri.parse(picPath).toString());
-            pic.setTags(getTagsByUri(String.valueOf(uri)));
+            pic = getNormalModelByUri(pic);
             ReviewImageActivity.imageModel = pic;
             startActivity(new Intent(this, ReviewImageActivity.class));
         }

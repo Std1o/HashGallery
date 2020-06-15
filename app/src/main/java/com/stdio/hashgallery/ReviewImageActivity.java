@@ -8,9 +8,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,10 +31,10 @@ public class ReviewImageActivity extends AppCompatActivity {
 
     public static ImageModel imageModel;
     private ImageView image;
-    private TextView tvTags;
     private FloatingActionButton addBtn;
     DBTags dbTags;
     public static SQLiteDatabase database;
+    LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class ReviewImageActivity extends AppCompatActivity {
         dbTags = new DBTags(this);
         database = dbTags.getWritableDatabase();
 
+        linearLayout = findViewById(R.id.lnTags);
         addBtn = findViewById(R.id.fab);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,20 +55,12 @@ public class ReviewImageActivity extends AppCompatActivity {
             }
         });
 
-        image = findViewById(R.id.image);
-        tvTags = findViewById(R.id.tvTags);
         if (imageModel.getTags() != null) {
-            tvTags.setText(imageModel.getTags());
+            setTags();
         }
 
-        tvTags.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.searchView.setIconified(false);//open searchView
-                MainActivity.searchView.setQuery(imageModel.getTags(), false);
-                finish();
-            }
-        });
+        image = findViewById(R.id.image);
+
 
         Glide.with(this)
                 .load(imageModel.getPicturePath())
@@ -78,10 +73,10 @@ public class ReviewImageActivity extends AppCompatActivity {
 
                 if(addBtn.isShown()){
                     addBtn.hide();
-                    tvTags.setVisibility(View.GONE);
+                    linearLayout.setVisibility(View.GONE);
                 }else{
                     addBtn.show();
-                    tvTags.setVisibility(View.VISIBLE);
+                    linearLayout.setVisibility(View.VISIBLE);
                 }
 
                 /**
@@ -99,6 +94,27 @@ public class ReviewImageActivity extends AppCompatActivity {
         });
     }
 
+    private void setTags() {
+        for (String retval : imageModel.getTags().split(" ", 2)) {
+            final TextView tv1 = new TextView(this);
+            tv1.setText(retval);
+            tv1.setTextSize(16);
+            tv1.setTextColor(Color.parseColor("#ff0000ff"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(7,0,7,0);
+            tv1.setLayoutParams(params);
+            tv1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.searchView.setIconified(false);//open searchView
+                    MainActivity.searchView.setQuery(tv1.getText().toString(), false);
+                    finish();
+                }
+            });
+            linearLayout.addView(tv1);
+        }
+    }
+
     private void addTags() {
         View dialogView = getLayoutInflater().inflate(R.layout.add_dialog, null);
         final TagsEditText tagsEditText = dialogView.findViewById(R.id.tagsEditText);
@@ -112,13 +128,23 @@ public class ReviewImageActivity extends AppCompatActivity {
                         for (String currentTag : tagsList) {
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
-                        addToDB(imageModel.getImageUri(), tagsEt.toString());
+                        if (imageModel.getTags() == null) {
+                            addToDB(imageModel.getImageUri(), tagsEt.toString());
+                        }
+                        else {
+                            updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
+                        }
                         Toast.makeText(ReviewImageActivity.this, tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
         dialog.setTitle("Добавить теги");
         dialog.setNegativeButton("Отмена", null);
         dialog.show();
+    }
+
+    private void updateDB(String tags, int id) {
+        database.execSQL("UPDATE tags SET tags = '" + tags + "' WHERE _id='"
+                + id + "';");
     }
 
     private void addToDB(String uri, String tags) {
