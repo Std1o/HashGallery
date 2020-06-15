@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/black">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@color/black"
         android:clickable="true"
         android:focusable="true"
         android:layout_width="wrap_content"
@@ -27,7 +28,7 @@
                 android:id="@+id/tvTag"
                 android:layout_width="wrap_content"
                 android:textColor="#ff0000ff"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@color/black"
                 android:clickable="true"
                 android:focusable="true"
                 android:textSize="16sp"
