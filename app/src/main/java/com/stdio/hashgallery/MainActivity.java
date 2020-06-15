@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             System.out.println(uri);
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,   Uri.parse("file://" + Environment.getExternalStorageDirectory())));
             ImageModel pic = new ImageModel();
-            String picPath = String.valueOf(uri).replace("content://com.stdio.hashgallery.provider/external_files/DCIM", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+            String picPath = String.valueOf(uri).replace("content://" + getPackageName() + ".provider/external_files/DCIM", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
             pic.setPicturePath(picPath);
             pic.setImageUri(Uri.parse(picPath).toString());
             pic.setTags(getTagsByUri(String.valueOf(uri)));
