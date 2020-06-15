@@ -14,13 +14,15 @@
 
   </androidx.viewpager.widget.ViewPager>
 
-  <TextView
-      android:id="@+id/tvTags"
+  <LinearLayout
+      android:id="@+id/lnTags"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|center_horizontal"
       android:layout_marginBottom="30dp"
-      android:textColor="#ff0000ff"/>
+      android:orientation="horizontal">
+
+  </LinearLayout>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
       android:id="@+id/fab"

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +65,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     DBTags dbTags;
     public static SQLiteDatabase database;
     public static boolean activateSearch = false;
+    LinearLayout linearLayout;
 
     public pictureBrowserFragment(){
 
@@ -96,6 +99,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         dbTags = new DBTags(getContext());
         database = dbTags.getWritableDatabase();
 
+        linearLayout = view.findViewById(R.id.lnTags);
         imagePager = view.findViewById(R.id.imagePager);
         pagingImages = new ImagesPagerAdapter();
         imagePager.setAdapter(pagingImages);
@@ -110,42 +114,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
             }
         });
 
-        tvTags = view.findViewById(R.id.tvTags);
-        if (tags != null) {
-            tvTags.setText(allImages.get(position).getTags());
+        if (allImages.get(position).getTags() != null) {
+            setTags();
         }
-        tvTags.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.searchView.setIconified(false);//open searchView
-                MainActivity.searchView.setQuery(allImages.get(position).getTags(), false);
-                activateSearch = true;
-                getFragmentManager().popBackStack();
-                ImageDisplay.activity.finish();
-            }
-        });
-        imagePager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                tags = allImages.get(position).getTags();
-                if (tags != null) {
-                    tvTags.setText(tags);
-                }
-                else {
-                    tvTags.setText("");
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         //adjusting the recyclerView indicator to the current position of the viewPager, also highlights the image in recyclerView with respect to the
         //viewPager's position
         allImages.get(position).setSelected(true);
@@ -180,6 +151,29 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
             }
         });
+    }
+
+    private void setTags() {
+        for (String retval : allImages.get(position).getTags().split(" ", 2)) {
+            final TextView tv1 = new TextView(getContext());
+            tv1.setText(retval);
+            tv1.setTextSize(16);
+            tv1.setTextColor(Color.parseColor("#ff0000ff"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(7,0,7,0);
+            tv1.setLayoutParams(params);
+            tv1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.searchView.setIconified(false);//open searchView
+                    MainActivity.searchView.setQuery(tv1.getText().toString(), false);
+                    activateSearch = true;
+                    getFragmentManager().popBackStack();
+                    ImageDisplay.activity.finish();
+                }
+            });
+            linearLayout.addView(tv1);
+        }
     }
 
     private void addTags() {
@@ -275,10 +269,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
 
                     if(addBtn.isShown()){
                         addBtn.hide();
-                        tvTags.setVisibility(View.GONE);
+                        linearLayout.setVisibility(View.GONE);
                     }else{
                         addBtn.show();
-                        tvTags.setVisibility(View.VISIBLE);
+                        linearLayout.setVisibility(View.VISIBLE);
                     }
 
                     /**
