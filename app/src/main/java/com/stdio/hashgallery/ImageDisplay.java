@@ -40,6 +40,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     TextView folderName;
     ImageView ivArrowBack;
     public static Activity activity;
+    public static String pathh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
         folderName.setText(getIntent().getStringExtra("folderName"));
 
         foldePath =  getIntent().getStringExtra("folderPath");
+        pathh = getIntent().getStringExtra("folderPath");;
         allpictures = new ArrayList<>();
         imageRecycler = findViewById(R.id.recycler);
         imageRecycler.addItemDecoration(new MarginDecoration(this));

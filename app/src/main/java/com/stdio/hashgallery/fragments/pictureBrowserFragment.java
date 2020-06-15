@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +109,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         database = dbTags.getWritableDatabase();
 
         if (allImages.get(position).getTags() != null) {
-            setTags(position);
+            setTags(position, allImages);
         }
         imageRecycler = view.findViewById(R.id.recycler);
         adapter = new TagsAdapter(tagsList,getContext());
@@ -137,8 +140,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
          */
         imagePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                setTags(position);
+            public void onPageScrolled(int i, float positionOffset, int positionOffsetPixels) {
+                position = i;
+                setTags(position, allImages);
                 adapter = new TagsAdapter(tagsList,getContext());
                 imageRecycler.setAdapter(adapter);
             }
@@ -163,10 +167,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         });
     }
 
-    private void setTags(int position) {
+    private void setTags(int position, ArrayList<ImageModel> list) {
         tagsList = new ArrayList<>();
-        if (allImages.get(position).getTags() != null) {
-            tagsList.addAll(Arrays.asList(allImages.get(position).getTags().split(" ")));
+        if (list.get(position).getTags() != null) {
+            tagsList.addAll(Arrays.asList(list.get(position).getTags().split(" ")));
         }
     }
 
@@ -200,8 +204,8 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         StringBuilder tagsEt = new StringBuilder();
-                        List<String> tagsList = tagsEditText.getTags();
-                        for (String currentTag : tagsList) {
+                        List<String> tagsListg = tagsEditText.getTags();
+                        for (String currentTag : tagsListg) {
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
                         if (allImages.get(position).getTags() == null) {
@@ -211,8 +215,11 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                             ImageModel imageModel = allImages.get(position);
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
                         }
-                        tagsList.add(tagsEt.toString());
-                        adapter.notifyDataSetChanged();
+                        allImages.clear();
+                        allImages.addAll(getAllImagesByFolder());
+                        setTags(position, allImages);
+                        adapter = new TagsAdapter(tagsList,getContext());
+                        imageRecycler.setAdapter(adapter);
                         Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -231,6 +238,62 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         contentValues.put(DBTags.KEY_URI, uri);
         contentValues.put(DBTags.KEY_TAGS, tags);
         database.insert(DBTags.TABLE_TAGS, null, contentValues);
+    }
+
+    public ArrayList<ImageModel> getAllImagesByFolder(){
+        ArrayList<ImageModel> images = new ArrayList<>();
+        Uri allVideosuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE};
+        Cursor cursor = getActivity().getContentResolver().query( allVideosuri, projection, MediaStore.Images.Media.DATA + " like ? ", new String[] {"%"+ImageDisplay.pathh+"%"}, null);
+        try {
+            cursor.moveToFirst();
+            do{
+                ImageModel pic = new ImageModel();
+
+                String picPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                String uri = Uri.parse(picPath).toString();
+
+                pic.setPicturName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)));
+                pic.setPicturePath(picPath);
+                pic.setImageUri(uri);
+                pic.setPictureSize(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
+                pic = getNormalModelByUri(pic);
+
+                images.add(pic);
+            }while(cursor.moveToNext());
+            cursor.close();
+            ArrayList<ImageModel> reSelection = new ArrayList<>();
+            for(int i = images.size()-1;i > -1;i--){
+                reSelection.add(images.get(i));
+            }
+            images = reSelection;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return images;
+    }
+
+    private ImageModel getNormalModelByUri(ImageModel imageModel) {
+        DBTags dbTags = new DBTags(getContext());
+        SQLiteDatabase database = dbTags.getWritableDatabase();
+        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
+            int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+            int idIndex = cursor.getColumnIndex(DBTags.KEY_ID);
+            do {
+                if (cursor.getString(uriIndex).equals(imageModel.getImageUri())) {
+                    imageModel.setTags(cursor.getString(tagsIndex));
+                    imageModel.setId(cursor.getInt(idIndex));
+                    return imageModel;
+                }
+            } while (cursor.moveToNext());
+        } else {
+            cursor.close();
+        }
+        return imageModel;
     }
 
 
