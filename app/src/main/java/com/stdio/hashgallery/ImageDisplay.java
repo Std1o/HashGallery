@@ -1,5 +1,6 @@
 package com.stdio.hashgallery;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -38,11 +39,13 @@ public class ImageDisplay extends AppCompatActivity implements itemClickListener
     String foldePath;
     TextView folderName;
     ImageView ivArrowBack;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
+        activity = this;
 
         folderName = findViewById(R.id.foldername);
         ivArrowBack = findViewById(R.id.ivArrowBack);

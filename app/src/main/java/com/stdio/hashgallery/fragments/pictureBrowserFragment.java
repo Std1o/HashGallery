@@ -27,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stdio.hashgallery.DBTags;
+import com.stdio.hashgallery.ImageDisplay;
+import com.stdio.hashgallery.MainActivity;
 import com.stdio.hashgallery.R;
 import com.stdio.hashgallery.utils.imageIndicatorListener;
 import com.stdio.hashgallery.models.ImageModel;
@@ -60,6 +62,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
     private FloatingActionButton addBtn;
     DBTags dbTags;
     public static SQLiteDatabase database;
+    public static boolean activateSearch = false;
 
     public pictureBrowserFragment(){
 
@@ -111,6 +114,16 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         if (tags != null) {
             tvTags.setText(allImages.get(position).getTags());
         }
+        tvTags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.searchView.setIconified(false);//open searchView
+                MainActivity.searchView.setQuery(allImages.get(position).getTags(), false);
+                activateSearch = true;
+                getFragmentManager().popBackStack();
+                ImageDisplay.activity.finish();
+            }
+        });
         imagePager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
