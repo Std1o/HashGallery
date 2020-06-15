@@ -2,6 +2,7 @@ package com.stdio.hashgallery;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.ContentValues;
@@ -23,6 +24,7 @@ import com.stdio.hashgallery.fragments.pictureBrowserFragment;
 import com.stdio.hashgallery.models.ImageModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mabbas007.tagsedittext.TagsEditText;
@@ -34,7 +36,9 @@ public class ReviewImageActivity extends AppCompatActivity {
     private FloatingActionButton addBtn;
     DBTags dbTags;
     public static SQLiteDatabase database;
-    LinearLayout linearLayout;
+    RecyclerView imageRecycler;
+    ArrayList<String> tagsList = new ArrayList<>();
+    TagsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +50,12 @@ public class ReviewImageActivity extends AppCompatActivity {
         dbTags = new DBTags(this);
         database = dbTags.getWritableDatabase();
 
-        linearLayout = findViewById(R.id.lnTags);
+        if (imageModel.getTags() != null) {
+            setTags();
+        }
+        imageRecycler = findViewById(R.id.recycler);
+        adapter = new TagsAdapter(tagsList, this);
+        imageRecycler.setAdapter(adapter);
         addBtn = findViewById(R.id.fab);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,10 +82,10 @@ public class ReviewImageActivity extends AppCompatActivity {
 
                 if(addBtn.isShown()){
                     addBtn.hide();
-                    linearLayout.setVisibility(View.GONE);
+                    imageRecycler.setVisibility(View.GONE);
                 }else{
                     addBtn.show();
-                    linearLayout.setVisibility(View.VISIBLE);
+                    imageRecycler.setVisibility(View.VISIBLE);
                 }
 
                 /**
@@ -95,23 +104,9 @@ public class ReviewImageActivity extends AppCompatActivity {
     }
 
     private void setTags() {
-        for (String retval : imageModel.getTags().split(" ")) {
-            final TextView tv1 = new TextView(this);
-            tv1.setText(retval);
-            tv1.setTextSize(16);
-            tv1.setTextColor(Color.parseColor("#ff0000ff"));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(7,0,7,0);
-            tv1.setLayoutParams(params);
-            tv1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MainActivity.searchView.setIconified(false);//open searchView
-                    MainActivity.searchView.setQuery(tv1.getText().toString(), false);
-                    finish();
-                }
-            });
-            linearLayout.addView(tv1);
+        tagsList = new ArrayList<>();
+        if (imageModel.getTags() != null) {
+            tagsList.addAll(Arrays.asList(imageModel.getTags().split(" ")));
         }
     }
 
@@ -134,6 +129,8 @@ public class ReviewImageActivity extends AppCompatActivity {
                         else {
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
                         }
+                        tagsList.add(tagsEt.toString());
+                        adapter.notifyDataSetChanged();
                         Toast.makeText(ReviewImageActivity.this, tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });

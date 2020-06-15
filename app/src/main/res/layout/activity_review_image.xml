@@ -11,15 +11,26 @@
         android:layout_height="match_parent"
         android:id="@+id/image" />
 
-    <LinearLayout
-        android:id="@+id/lnTags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.stdio.hashgallery.utils.AutoFitRecyclerView
+        android:layout_below="@id/head"
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
+        android:paddingBottom="30dp"
+        android:background="@color/black"
+        android:columnWidth="80dp">
 
-    </LinearLayout>
+
+        <!--app:fastScrollEnabled="true"
+        app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+        app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"-->
+
+    </com.stdio.hashgallery.utils.AutoFitRecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -27,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="150dp"
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@android:color/black"
