@@ -185,6 +185,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
         tv1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity.setDatabaseList();
                 MainActivity.searchView.setIconified(false);//open searchView
                 MainActivity.searchView.setQuery(tv1.getText().toString(), false);
                 activateSearch = true;
@@ -209,7 +210,7 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
                         if (allImages.get(position).getTags() == null) {
-                            addToDB(allImages.get(position).getImageUri(), tagsEt.toString());
+                            addToDB(allImages.get(position).getImageUri(), allImages.get(position).getPicturePath(), tagsEt.toString());
                         }
                         else {
                             ImageModel imageModel = allImages.get(position);
@@ -219,7 +220,9 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                         allImages.addAll(getAllImagesByFolder());
                         setTags(position, allImages);
                         adapter = new TagsAdapter(tagsList,getContext());
+                        pagingImages.notifyDataSetChanged();
                         imageRecycler.setAdapter(adapter);
+                        pagingImages.notifyDataSetChanged();
                         Toast.makeText(getContext(), tagsEt.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -233,9 +236,10 @@ public class pictureBrowserFragment extends Fragment implements imageIndicatorLi
                 + id + "';");
     }
 
-    private void addToDB(String uri, String tags) {
+    private void addToDB(String uri, String path, String tags) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBTags.KEY_URI, uri);
+        contentValues.put(DBTags.KEY_PATH, path);
         contentValues.put(DBTags.KEY_TAGS, tags);
         database.insert(DBTags.TABLE_TAGS, null, contentValues);
     }

@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
     public final static int file_req_code = 1;
     public static Context context;
     public static Uri uri;
+    ArrayList<ImageFolderModel> folds;
+    static ArrayList<ImageModel> databaseList = new ArrayList<>();
 
     /**
      * Request the user for permission to access media files and read images on the device
@@ -118,10 +120,11 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         initFolders();
         searchView = findViewById(R.id.searchView);
         setOnQueryTextListener();
+        setDatabaseList();
     }
 
     private void initFolders() {
-        ArrayList<ImageFolderModel> folds = getPicturePaths();
+        folds = getPicturePaths();
 
         if(folds.isEmpty()){
             empty.setVisibility(View.VISIBLE);
@@ -140,12 +143,10 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if(allpictures.isEmpty()){
-                    allpictures = getAllImagesByFolder();
-                }
                 String query = s.replace("#", "");
                 if (getFilteredList(query).size() == 0 || query.isEmpty()) {
-                    initFolders();
+                    RecyclerView.Adapter folderAdapter = new pictureFolderAdapter(folds,MainActivity.this,MainActivity.this);
+                    folderRecycler.setAdapter(folderAdapter);
                 }
                 else {
                     folderRecycler.setAdapter(new picture_Adapter(getFilteredList(query),MainActivity.this,MainActivity.this));
@@ -155,9 +156,36 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         });
     }
 
+    public static void setDatabaseList() {
+        databaseList = new ArrayList<>();
+        DBTags dbTags = new DBTags(context);
+        SQLiteDatabase database = dbTags.getWritableDatabase();
+        Cursor cursor = database.query(DBTags.TABLE_TAGS, null, null,
+                null, null, null, null);
+
+        if(cursor!=null && cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                int uriIndex = cursor.getColumnIndex(DBTags.KEY_URI);
+                int pathIndex = cursor.getColumnIndex(DBTags.KEY_PATH);
+                int tagsIndex = cursor.getColumnIndex(DBTags.KEY_TAGS);
+                int idIndex = cursor.getColumnIndex(DBTags.KEY_ID);
+                do {
+                    ImageModel imageModel = new ImageModel();
+                    imageModel.setTags(cursor.getString(tagsIndex));
+                    imageModel.setImageUri(cursor.getString(uriIndex));
+                    imageModel.setPicturePath(cursor.getString(pathIndex));
+                    imageModel.setId(cursor.getInt(idIndex));
+                    databaseList.add(imageModel);
+                } while (cursor.moveToNext());
+            } else {
+                cursor.close();
+            }
+        }
+    }
+
     private ArrayList<ImageModel> getFilteredList(String query) {
         ArrayList<ImageModel> filteredList = new ArrayList<>();
-        for (ImageModel imageModel : allpictures) {
+        for (ImageModel imageModel : databaseList) {
             if (imageModel.getTags() != null && imageModel.getTags().contains(query)) {
                 filteredList.add(imageModel);
             }
@@ -238,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
         Uri allImagesuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.Media.BUCKET_ID};
-        Cursor cursor = this.getContentResolver().query(allImagesuri, projection, null, null, null);
+        Cursor cursor = context.getContentResolver().query(allImagesuri, projection, null, null, null);
         try {
             if (cursor != null) {
                 cursor.moveToFirst();

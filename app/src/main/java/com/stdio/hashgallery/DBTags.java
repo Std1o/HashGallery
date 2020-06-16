@@ -13,6 +13,7 @@ public class DBTags extends SQLiteOpenHelper{
 
     public static final String KEY_ID = "_id";
     public static final String KEY_URI = "uri";
+    public static final String KEY_PATH = "path";
     public static final String KEY_TAGS = "tags";
 
     public DBTags(Context context) {
@@ -22,7 +23,7 @@ public class DBTags extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_TAGS + "(" + KEY_ID
-                + " integer primary key,"  + KEY_URI + " text," +  KEY_TAGS + " text" + ")");
+                + " integer primary key,"  + KEY_URI + " text," + KEY_PATH + " text," +  KEY_TAGS + " text" + ")");
 
     }
 

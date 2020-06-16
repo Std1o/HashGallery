@@ -127,7 +127,7 @@ public class ReviewImageActivity extends AppCompatActivity {
                             tagsEt.append("#").append(currentTag.replace(" ", "_")).append(" ");
                         }
                         if (imageModel.getTags() == null) {
-                            addToDB(imageModel.getImageUri(), tagsEt.toString());
+                            addToDB(imageModel.getImageUri(), imageModel.getPicturePath(), tagsEt.toString());
                         }
                         else {
                             updateDB(imageModel.getTags() + tagsEt.toString(), imageModel.getId());
@@ -148,9 +148,10 @@ public class ReviewImageActivity extends AppCompatActivity {
                 + id + "';");
     }
 
-    private void addToDB(String uri, String tags) {
+    private void addToDB(String uri, String path, String tags) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBTags.KEY_URI, uri);
+        contentValues.put(DBTags.KEY_PATH, path);
         contentValues.put(DBTags.KEY_TAGS, tags);
         database.insert(DBTags.TABLE_TAGS, null, contentValues);
     }

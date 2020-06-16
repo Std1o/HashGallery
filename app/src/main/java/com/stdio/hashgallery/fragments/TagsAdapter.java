@@ -60,6 +60,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.PicHolder> {
         holder.tvTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity.setDatabaseList();
                 MainActivity.searchView.setIconified(false);//open searchView
                 MainActivity.searchView.setQuery(holder.tvTag.getText().toString(), false);
                 ImageDisplay.activity.finish();
@@ -68,6 +69,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.PicHolder> {
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity.setDatabaseList();
                 MainActivity.searchView.setIconified(false);//open searchView
                 MainActivity.searchView.setQuery(holder.tvTag.getText().toString(), false);
                 ImageDisplay.activity.finish();
